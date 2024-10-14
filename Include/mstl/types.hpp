@@ -28,3 +28,39 @@ constexpr u8  U8_MAX  = 0xffu;
 constexpr u16 U16_MAX = 0xffffu;
 constexpr u32 U32_MAX = 0xffffffffu;
 constexpr u64 U64_MAX = 0xffffffffffffffffllu;
+
+namespace mstl
+{
+
+	struct Extend2D final
+	{
+		u32 Width;
+		u32 Height;
+	};
+
+	struct Extend3D final
+	{
+		u32 Width;
+		u32 Height;
+		u32 Depth;
+	};
+
+	struct Viewport final
+	{
+		f32 X = 0.0f;
+		f32 Y = 0.0f;
+		f32 Width = 0.0f;
+		f32 Height = 0.0f;
+		f32 MinDepth = 0.0f;
+		f32 MaxDepth = 1.0f;
+	};
+
+	struct Scissor final
+	{
+		s32 X = 0;
+		s32 Y = 0;
+		u32 Width = 0;
+		u32 Height = 0;
+	};
+
+}
