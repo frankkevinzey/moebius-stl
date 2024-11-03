@@ -1,17 +1,9 @@
 #pragma once
 
-#include <memory>
+#include "types.hpp"
 
 namespace mstl
 {
-
-	template<typename T>
-	using SPtr = std::shared_ptr<T>;
-
-	template<typename T, typename ... Args>
-	constexpr SPtr<T> CreateSPtr(Args&& ... args) { return std::make_shared<T>(std::forward<Args>(args)...); }
-	template<typename T>
-	constexpr SPtr<T> CreateSPtr(T* instance) { return SPtr<T>(instance); }
 
 	class RefCounted
 	{
@@ -41,15 +33,15 @@ namespace mstl
 
 	public:
 		Ref(void) = default;
-		Ref(std::nullptr_t n) : _ptr(nullptr) {}
-		Ref(T* instance) : _ptr(instance) { IncRef(); }
+		inline Ref(std::nullptr_t n) : _ptr(nullptr) {}
+		inline Ref(T* instance) : _ptr(instance) { IncRef(); }
 		template<typename T2>
-		Ref(const Ref<T2>& other) : _ptr((T*)other._ptr) { IncRef(); }
+		inline Ref(const Ref<T2>& other) : _ptr((T*)other._ptr) { IncRef(); }
 		template<typename T2>
-		Ref(Ref<T2>&& other) : _ptr((T*)other._ptr) { other._ptr = nullptr; }
-		Ref(const Ref<T>& other) : _ptr(other._ptr) { IncRef(); }
+		inline Ref(Ref<T2>&& other) : _ptr((T*)other._ptr) { other._ptr = nullptr; }
+		inline Ref(const Ref<T>& other) : _ptr(other._ptr) { IncRef(); }
 
-		~Ref(void) { DecRef(); }
+		inline ~Ref(void) { DecRef(); }
 
 		template<typename T2>
 		inline Ref<T2> As(void) { return Ref<T2>(*this); }

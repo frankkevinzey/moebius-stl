@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 using s8  = signed char;
 using s16 = short;
 using s32 = int;
