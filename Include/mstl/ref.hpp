@@ -10,6 +10,8 @@ namespace mstl
 	public:
 		virtual ~RefCounted(void) = default;
 
+		inline u32 CountedRefs(void) const { return _RefCount; }
+
 	protected:
 		RefCounted(void) = default;
 
@@ -17,9 +19,9 @@ namespace mstl
 		inline void IncRefCount(void) const { ++_RefCount; }
 		inline void DecRefCount(void) const { --_RefCount; }
 
-		inline uint32_t RefCount(void) const { return _RefCount; }
+		inline u32 RefCount(void) const { return _RefCount; }
 
-		mutable uint32_t _RefCount = 0; // TODO (zeyo): use atomic for thread safety???
+		mutable u32 _RefCount = 0; // TODO (zeyo): use atomic for thread safety???
 
 		template<typename T>
 		friend class Ref;
