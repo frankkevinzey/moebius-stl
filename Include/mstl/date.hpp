@@ -15,14 +15,15 @@ namespace mstl
   class Date final
   {
   public:
-    Date(void) : timestamp(time(nullptr)) {}
-    Date(const std::time_t unix_timestamp) : timestamp(unix_timestamp) {}
+		inline Date(void) : timestamp(time(nullptr)) {}
+		inline Date(const std::time_t unix_timestamp) : timestamp(unix_timestamp) {}
+		~Date(void) = default;
 
     inline s32 DayOfMonth(void) const { return get_tm().tm_mday; }
     inline s32 Month(void) const { return get_tm().tm_mon + 1; }
     inline s32 Year(void) const { return get_tm().tm_year + 1900; }
     inline s32 DayOfWeek(void) const { return get_tm().tm_wday; }
-    s32 WeekNumber(void) const
+		inline s32 WeekNumber(void) const
     {
       std::tm tm_date = get_tm();
 
@@ -33,7 +34,7 @@ namespace mstl
       return week_number;
     }
 
-    string _asctime(void) const
+    inline std::string _asctime(void) const
     {
       std::tm tm_date = get_tm();
 
@@ -43,7 +44,7 @@ namespace mstl
       return str;
     }
 
-    string str(const string& _format) const
+		inline std::string str(const std::string& _format) const
     {
       std::stringstream ss{};
 
