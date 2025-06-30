@@ -57,9 +57,9 @@ namespace mstl
 
 		inline std::time_t Timestamp(void) const { return _timestamp; }
 
-  private:
     std::time_t _timestamp;
 
+	private:
     inline std::tm get_tm(void) const
     {
       std::tm tm_date;
