@@ -72,12 +72,15 @@ namespace mstl
     {
       switch (_c)
       {
-      case 'Y': ss << Year();                                              break;
-      case 'y': ss << (Year() % 100);                                      break;
-      case 'm': ss << std::setw(2) << std::setfill('0') << (Month());      break;
-      case 'd': ss << std::setw(2) << std::setfill('0') << (DayOfMonth()); break;
-      case 'w': ss << std::setw(2) << std::setfill('0') << (WeekNumber()); break;
-      case 'D': ss << (DayOfWeek());                                       break;
+      case 'Y': ss << Year();                                                break;
+      case 'y': ss << (Year() % 100);                                        break;
+      case 'm': ss << std::setw(2) << std::setfill('0') << (Month());        break;
+      case 'd': ss << std::setw(2) << std::setfill('0') << (DayOfMonth());   break;
+      case 'w': ss << std::setw(2) << std::setfill('0') << (WeekNumber());   break;
+			case 'D': ss << (DayOfWeek());                                         break;
+			case 'H': ss << std::setw(2) << std::setfill('0') << get_tm().tm_hour; break;
+			case 'i': ss << std::setw(2) << std::setfill('0') << get_tm().tm_min;  break;
+			case 's': ss << std::setw(2) << std::setfill('0') << get_tm().tm_sec;  break;
 
       default: ss << _c; break;
       }
