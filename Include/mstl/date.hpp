@@ -15,8 +15,8 @@ namespace mstl
   class Date final
   {
   public:
-		inline Date(void) : timestamp(time(nullptr)) {}
-		inline Date(const std::time_t unix_timestamp) : timestamp(unix_timestamp) {}
+		inline Date(void) : _timestamp(time(nullptr)) {}
+		inline Date(const std::time_t unix_timestamp) : _timestamp(unix_timestamp) {}
 		~Date(void) = default;
 
     inline s32 DayOfMonth(void) const { return get_tm().tm_mday; }
@@ -55,13 +55,15 @@ namespace mstl
       return ss.str();
     }
 
+		inline std::time_t Timestamp(void) const { return _timestamp; }
+
   private:
-    std::time_t timestamp;
+    std::time_t _timestamp;
 
     inline std::tm get_tm(void) const
     {
       std::tm tm_date;
-      localtime_r(&tm_date, &timestamp);
+      localtime_r(&tm_date, &_timestamp);
 
       return tm_date;
     }
