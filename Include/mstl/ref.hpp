@@ -139,7 +139,7 @@ namespace mstl
 			if (_ptr)
 				_ptr->IncRefCount();
 		}
-		inline void DecRef(void) const
+		inline void DecRef(void)
 		{
 			if (!_ptr)
 				return;
@@ -147,7 +147,11 @@ namespace mstl
 			_ptr->DecRefCount();
 
 			if (_ptr->RefCount() == 0)
+			{
 				delete _ptr;
+
+				_ptr = nullptr;
+			}
 		}
 
 		T* _ptr = nullptr;
