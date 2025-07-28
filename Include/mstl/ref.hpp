@@ -58,7 +58,16 @@ namespace mstl
 
 			return *this;
 		}
-		inline Ref& operator=(Ref<T>& other)
+		//inline Ref& operator=(Ref<T>& other)
+		//{
+		//	other.IncRef();
+		//	DecRef();
+		//
+		//	_ptr = other._ptr;
+		//
+		//	return *this;
+		//}
+		inline Ref& operator=(const Ref<T>& other)
 		{
 			other.IncRef();
 			DecRef();
@@ -67,12 +76,10 @@ namespace mstl
 
 			return *this;
 		}
-		inline Ref& operator=(const Ref<T>& other)
+		inline Ref& operator=(Ref<T>&& other)
 		{
-			other.IncRef();
-			DecRef();
-
 			_ptr = other._ptr;
+			other._ptr = nullptr;
 
 			return *this;
 		}
