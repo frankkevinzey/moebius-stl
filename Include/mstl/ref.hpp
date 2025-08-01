@@ -2,6 +2,8 @@
 
 #include "types.hpp"
 
+#include <mutex>
+
 namespace mstl
 {
 
@@ -16,12 +18,13 @@ namespace mstl
 		RefCounted(void) = default;
 
 	private:
-		inline void IncRefCount(void) const { ++_RefCount; }
-		inline void DecRefCount(void) const { --_RefCount; }
+		inline void IncRefCount(void) const { std::lock_guard l{_}; ++_RefCount; }
+		inline void DecRefCount(void) const { std::lock_guard l{_}; --_RefCount; }
 
 		inline u32 RefCount(void) const { return _RefCount; }
 
 		mutable u32 _RefCount = 0; // TODO (zeyo): use atomic for thread safety???
+		mutable std::mutex _;
 
 		template<typename T>
 		friend class Ref;
@@ -153,12 +156,12 @@ namespace mstl
 
 			_ptr->DecRefCount();
 
-			if (_ptr->RefCount() == 0)
-			{
-				delete _ptr;
+			if (_ptr->RefCount() > 0)
+				return;
 
-				_ptr = nullptr;
-			}
+			delete _ptr;
+
+			_ptr = nullptr;
 		}
 
 		T* _ptr = nullptr;
