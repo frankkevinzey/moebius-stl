@@ -6,22 +6,35 @@ namespace mstl
 {
 
 	template<typename T>
-	class Scope;
-
-	template<typename T>
 	class ScopeRef final
 	{
 	public:
 		inline ScopeRef(void) : _obj(nullptr) {}
-		ScopeRef(const Scope<T>& _ptr);
+		inline ScopeRef(T* _ptr) : _obj(_ptr) {}
 		inline ScopeRef(std::nullptr_t) : _obj(nullptr) {}
+		inline ScopeRef(ScopeRef<T>&& other) : _obj(other._obj) { other._obj = nullptr; }
+		inline ScopeRef(const ScopeRef<T>& other) : _obj(other._obj) {}
+		~ScopeRef(void) = default;
+
+		inline ScopeRef<T>& operator=(ScopeRef<T>&& other)
+		{
+			_obj = other._obj;
+			other._obj= nullptr;
+
+			return *this;
+		}
+
+		inline ScopeRef<T>& operator=(const ScopeRef<T>& other)
+		{
+			_obj = other._obj;
+
+			return *this;
+		}
 
 		template<typename T2>
 		inline       T2& As(void)       { return *((T2*)_obj); }
 		template<typename T2>
 		inline const T2& As(void) const { return *((T2*)_obj); }
-
-		inline ScopeRef<T> operator=(const Scope<T>& other) const { return other; }
 
 		inline operator bool(void)       { return _obj != nullptr; }
 		inline operator bool(void) const { return _obj != nullptr; }
@@ -33,37 +46,29 @@ namespace mstl
 		inline const T& operator *(void) const { return *_obj; }
 
 	private:
-		ScopeRef(T* _ptr) : _obj(_ptr) {}
-
 		T* _obj;
-
-		friend class Scope<T>;
 
 	};
 
-	/// <summary>
-	/// Scopes an objects ownership. Ownership is not transferable by assignment but explicit function calls.
-	/// </summary>
-	/// <typeparam name="T">Type of object to scope ownership</typeparam>
 	template<typename T>
 	class Scope final
 	{
 	public:
-		Scope(void) = default;
-		inline Scope(std::nullptr_t n) : _ptr(nullptr) {}
+		inline Scope(void) : _ptr(nullptr) {}
+		inline Scope(std::nullptr_t) : _ptr(nullptr) {}
 		inline Scope(T instance) { _ptr = new T(std::move(instance)); }
 		inline ~Scope(void) { Release(); }
 
-		Scope& operator=(const Scope<T>& other) = delete;
+		Scope<T>& operator=(const Scope<T>& other) = delete;
 
-		inline Scope& operator=(std::nullptr_t)
+		inline Scope<T>& operator=(std::nullptr_t)
 		{
 			Release();
 
 			return *this;
 		}
 
-		inline Scope& operator=(Scope<T>&& other)
+		inline Scope<T>& operator=(Scope<T>&& other)
 		{
 			Release();
 
@@ -74,7 +79,7 @@ namespace mstl
 		}
 
 		template<typename T2>
-		inline ScopeRef<T2> As(void) const { return (T2*)_ptr; }
+		inline ScopeRef<T2> As(void) { return (T2*)_ptr; }
 
 		inline operator bool(void)       { return _ptr != nullptr; }
 		inline operator bool(void) const { return _ptr != nullptr; }
@@ -100,10 +105,13 @@ namespace mstl
 			_ptr = otherPtr;
 		}
 
+		/// <summary>
+		/// Transfers ownership out of this Scope.
+		/// </summary>
+		inline T* Transfer(void) { T* _tmp = _ptr; _ptr = nullptr; return _tmp; }
+
 		template<typename... Args>
 		static inline Scope<T> Create(Args&&... args) { return Scope<T>(new T(std::forward<Args>(args)...)); }
-
-		inline T* Transfer(void) { T* _tmp = _ptr; _ptr = nullptr; return _tmp; }
 
 	private:
 		inline void Release(void) { if (_ptr) delete _ptr; _ptr = nullptr; }
