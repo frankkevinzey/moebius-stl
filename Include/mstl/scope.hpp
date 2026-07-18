@@ -6,6 +6,9 @@ namespace mstl
 {
 
 	template<typename T>
+	class Scope;
+
+	template<typename T>
 	class ScopeRef final
 	{
 	public:
@@ -16,10 +19,13 @@ namespace mstl
 		inline ScopeRef(const ScopeRef<T>& other) : _obj(other._obj) {}
 		~ScopeRef(void) = default;
 
+		ScopeRef(const Scope<T>& other);
+		ScopeRef<T>& operator=(const Scope<T>& other);
+
 		inline ScopeRef<T>& operator=(ScopeRef<T>&& other)
 		{
 			_obj = other._obj;
-			other._obj= nullptr;
+			other._obj = nullptr;
 
 			return *this;
 		}
@@ -32,7 +38,7 @@ namespace mstl
 		}
 
 		template<typename T2>
-		inline       T2& As(void)       { return *((T2*)_obj); }
+		inline       T2& As(void) const { return *((T2*)_obj); }
 		template<typename T2>
 		inline const T2& As(void) const { return *((T2*)_obj); }
 
@@ -56,8 +62,12 @@ namespace mstl
 	public:
 		inline Scope(void) : _ptr(nullptr) {}
 		inline Scope(std::nullptr_t) : _ptr(nullptr) {}
-		inline Scope(T instance) { _ptr = new T(std::move(instance)); }
+		inline Scope(T* instance) { _ptr = instance; }
 		inline ~Scope(void) { Release(); }
+
+		template<typename D>
+			requires std::derived_from<D, T>
+		inline Scope(Scope<D>&& other) : _ptr((T*)other.Transfer()) {}
 
 		Scope<T>& operator=(const Scope<T>& other) = delete;
 
@@ -80,6 +90,8 @@ namespace mstl
 
 		template<typename T2>
 		inline ScopeRef<T2> As(void) { return (T2*)_ptr; }
+		template<typename T2>
+		inline ScopeRef<const T2> As(void) const { return (T2*)_ptr; }
 
 		inline operator bool(void)       { return _ptr != nullptr; }
 		inline operator bool(void) const { return _ptr != nullptr; }
@@ -118,6 +130,19 @@ namespace mstl
 
 		T* _ptr = nullptr;
 
+		friend class ScopeRef<T>;
+
 	};
+
+	template<typename T>
+	ScopeRef<T>::ScopeRef(const Scope<T>& other) : _obj(other._ptr) {}
+
+	template<typename T>
+	ScopeRef<T>& ScopeRef<T>::operator=(const Scope<T>& other)
+	{
+		_obj = other._ptr;
+
+		return *this;
+	}
 
 }
