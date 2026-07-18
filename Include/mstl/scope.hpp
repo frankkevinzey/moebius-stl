@@ -74,7 +74,7 @@ namespace mstl
 		}
 
 		template<typename T2>
-		inline ScopeRef<T2> As(void) { return (T2*)_ptr; }
+		inline ScopeRef<T2> As(void) const { return (T2*)_ptr; }
 
 		inline operator bool(void)       { return _ptr != nullptr; }
 		inline operator bool(void) const { return _ptr != nullptr; }
