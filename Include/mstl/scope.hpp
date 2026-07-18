@@ -5,6 +5,42 @@
 namespace mstl
 {
 
+	template<typename T>
+	class Scope;
+
+	template<typename T>
+	class ScopeRef final
+	{
+	public:
+		inline ScopeRef(void) : _obj(nullptr) {}
+		ScopeRef(const Scope<T>& _ptr);
+		inline ScopeRef(std::nullptr_t) : _obj(nullptr) {}
+
+		template<typename T2>
+		inline       T2& As(void)       { return *((T2*)_obj); }
+		template<typename T2>
+		inline const T2& As(void) const { return *((T2*)_obj); }
+
+		inline ScopeRef<T> operator=(const Scope<T>& other) const { return other; }
+
+		inline operator bool(void)       { return _obj != nullptr; }
+		inline operator bool(void) const { return _obj != nullptr; }
+
+		inline       T* operator ->(void)       { return _obj; }
+		inline const T* operator ->(void) const { return _obj; }
+
+		inline       T& operator *(void)       { return *_obj; }
+		inline const T& operator *(void) const { return *_obj; }
+
+	private:
+		ScopeRef(T* _ptr) : _obj(_ptr) {}
+
+		T* _obj;
+
+		friend class Scope<T>;
+
+	};
+
 	/// <summary>
 	/// Scopes an objects ownership. Ownership is not transferable by assignment but explicit function calls.
 	/// </summary>
@@ -38,15 +74,15 @@ namespace mstl
 		}
 
 		template<typename T2>
-		inline T2* As(void) { return (T2*)_ptr; }
+		inline ScopeRef<T2> As(void) { return (T2*)_ptr; }
 
 		inline operator bool(void)       { return _ptr != nullptr; }
 		inline operator bool(void) const { return _ptr != nullptr; }
 
-		inline T* operator->(void) { return _ptr; }
-		inline const T* operator->(void) const { return _ptr; }
+		inline T* operator ->(void)             { return _ptr; }
+		inline const T* operator ->(void) const { return _ptr; }
 
-		inline T* const Raw(void) { return _ptr; }
+		inline T* const Raw(void)             { return _ptr; }
 		inline const T* const Raw(void) const { return _ptr; }
 
 		inline void Reset(T* instance = nullptr)
