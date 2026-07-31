@@ -18,10 +18,10 @@ using extended = long double; // 64 - 80 - 128 Bit floating point number
 
 #define BIT(bitshift) (1u << (bitshift))
 
-constexpr s8  S8_MIN  = (-127 - 1);
-constexpr s16 S16_MIN = (-32767 - 1);
-constexpr s32 S32_MIN = (-2147483647 - 1);
-constexpr s64 S64_MIN = (-9223372036854775807 - 1);
+constexpr s8  S8_MIN  = (-128);
+constexpr s16 S16_MIN = (-32768);
+constexpr s32 S32_MIN = (-2147483646);
+constexpr s64 S64_MIN = (-9223372036854775808);
 constexpr s8  S8_MAX  = 127;
 constexpr s16 S16_MAX = 32767;
 constexpr s32 S32_MAX = 2147483647;
