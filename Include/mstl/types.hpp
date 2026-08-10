@@ -65,4 +65,12 @@ namespace mstl
 		u32 Height = 0;
 	};
 
+	struct ColorMask final
+	{
+		u32 R = 0xFF000000;
+		u32 G = 0x00FF0000;
+		u32 B = 0x0000FF00;
+		u32 A = 0x000000FF;
+	};
+
 }
